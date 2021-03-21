@@ -1,35 +1,15 @@
 from django.db.models import *
 from product.models import *
 
-class RecipeCategoryImage(Model):
-    image = ImageField(upload_to="images/recipe_category/")
-
-    class Meta:
-        db_table = "recipe_category_image"
-
-    def __str__(self):
-        return self.id
-
 class RecipeCategory(Model):
 
     name = CharField(max_length=25, unique=True, null=False)
-    image = ForeignKey(RecipeCategoryImage, on_delete=CASCADE)
     
     class Meta:
         db_table = "recipe_category"
 
     def __str__(self):
         return self.name
-
-class RecipeImage(Model):
-    image = ImageField(upload_to="images/recipe/")
-    is_main = BooleanField(default=False)
-
-    class Meta:
-        db_table = "recipe_image"
-
-    def __str__(self):
-        return self.id
 
 class Recipe(Model):
     name = CharField(max_length=30, null=False)

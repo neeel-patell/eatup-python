@@ -37,10 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'livesync',
     'django.contrib.staticfiles',
-    'rest_framework',
     'recipe',
     'product',
+    'api',
+    'web',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'livesync.core.middleware.DjangoLiveSyncMiddleware',
 ]
 
 ROOT_URLCONF = 'eatup_api.urls'
@@ -58,7 +61,7 @@ ROOT_URLCONF = 'eatup_api.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

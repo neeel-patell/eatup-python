@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import *
+from recipe.models import *
 from django.http import HttpResponse
 
 def get_recipe_category(request):
