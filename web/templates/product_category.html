@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h4 class="text-center">Product Category</h4>
+    <hr class="bg-primary" style="height: 5px;">
+    <table class="table table-bordered text-center">
+        <div class="container-fluid text-end">
+            <div class="p-3">
+                <button type="button" class="btn btn-warning rounded-pill" data-bs-toggle="modal" data-bs-target="#add_popup"><i class="fas fa-plus"></i> Add Category</button>
+            <div>
+            <div class="modal fade" id="add_popup" tabindex="-1" aria-labelledby="add_popup_label" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-center" id="add_popup_label">New Category Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{% url 'add_product_category' %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="modal-body">
+                                <input type="text" class="form-control mt-3" name="name" placeholder="Enter Category Name" required>
+                                {% comment %} <input type="file" class="form-control mt-3 mb-3" name="image" accept="image/*"> {% endcomment %}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <thead class="h5">
+            <tr>
+                <td>Sr No</td>
+                <td>Name</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr>
+                <td class="w-25">{{ category.id }}</td>
+                <td><a class="nav-link" href="{% url 'view_product_category_single' category.id %}">{{ category.name }}</a></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td class="h6 text-center" colspan="3">No data available...</td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+
+{% endblock %}  
