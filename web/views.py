@@ -2,7 +2,6 @@ from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
 from recipe.models import *
 from django.urls import reverse
-from django.urls.resolvers import URLResolver
 import os
 
 def home(request):
@@ -108,26 +107,26 @@ def view_product_category_single(request, id):
 
 ''' Product functions start '''
 
-def view_product(request):
+def view_product(request, category_id):
     if request.method == "GET":
-        products = Product.objects.order_by('name')
+        category = ProductCategory.objects.get(pk=category_id)
+        products = Product.objects.filter(category=category).order_by('name')
         categories = ProductCategory.objects.order_by('name')
-        return render(request, "product.html", {'products':products, 'categories':categories})
+        return render(request, "product.html", {'products':products, 'category':category})
 
-def add_product(request):
+def add_product(request, category_id):
     if request.method == "POST":
         name = request.POST['name']
-        category = request.POST['category']
         quantity = request.POST['quantity']
         price = request.POST['price']
 
-        category_obj = ProductCategory.objects.get(pk=category)
+        category_obj = ProductCategory.objects.get(pk=category_id)
         product = Product(name=name, category=category_obj)
         product.save()
         product_obj = Product.objects.latest('id')
         add_price(product_obj, price)
         change_quantity(product_obj, quantity)
-        return redirect(reverse('view_product'))
+        return redirect(reverse('view_product', kwargs={'category_id':category_id}))
 
 def add_price(product_obj, price):
     ProductPrice.objects.filter(product = product_obj).update(is_current=False)
@@ -143,7 +142,7 @@ def delete_product(request, id):
         ProductPrice.objects.filter(product=product).delete()
         ProductQuantity.objects.filter(product=product).delete()
         product.delete()
-        return redirect(reverse('view_product'))
+        return redirect(reverse('view_product', kwargs={'category_id':category_id}))
 
 
 def update_product(request, id):

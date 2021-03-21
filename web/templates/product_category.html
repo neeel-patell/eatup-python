@@ -41,6 +41,7 @@
             <tr>
                 <td class="w-25">{{ category.id }}</td>
                 <td><a class="nav-link" href="{% url 'view_product_category_single' category.id %}">{{ category.name }}</a></td>
+                <td><a class="nav-link" href="{% url 'view_product' category.id %}">View Products</a></td>
             </tr>
             {% empty %}
             <tr>
