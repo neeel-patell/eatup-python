@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% comment %} <form class="container text-center" action="{% url 'recipe_category_single' category.id %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="type" value="image_change">
+        <img class="img-thumbnail" src="/media/images/product/{{ product.id }}.jpg">
+        <div class="input-group mt-3">
+            <input type="file" name="image" class="form-control" accept="image/*">
+            <input type="submit" class="btn btn-danger" value="Change Image"></button>
+        </div>
+    </form> {% endcomment %}
+    <form class="mt-5" action="{% url 'update_product' product.id %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="type" value="details_change">
+        <div class="input-group">
+            <input class="form-control" type="text" name="name" value="{{ product.name }}" placeholder="Enter new Name">
+            <input class="form-control" type="text" name="price" value="{{ price.price }}" placeholder="Enter new Name">
+            <input class="form-control" type="text" name="quantity" value="{{ quantity.quantity }}" placeholder="Enter new Name">
+            <button type="submit" class="btn btn-danger">Change Details</button>
+        </div>
+    </form>
+    <div class="mt-5 container text-center">
+        <button class="btn btn-warning rounded-pill" onclick="location.href='{% url 'delete_product' product.id %}'"><i class="fas fa-minus-circle"></i> Remove Product</button>
+    </div>
+{% endblock %}

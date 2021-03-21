@@ -2,6 +2,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
 from recipe.models import *
 from django.urls import reverse
+from django.urls.resolvers import URLResolver
 import os
 
 def home(request):
@@ -106,5 +107,62 @@ def view_product_category_single(request, id):
 
 
 ''' Product functions start '''
+
+def view_product(request):
+    if request.method == "GET":
+        products = Product.objects.order_by('name')
+        categories = ProductCategory.objects.order_by('name')
+        return render(request, "product.html", {'products':products, 'categories':categories})
+
+def add_product(request):
+    if request.method == "POST":
+        name = request.POST['name']
+        category = request.POST['category']
+        quantity = request.POST['quantity']
+        price = request.POST['price']
+
+        category_obj = ProductCategory.objects.get(pk=category)
+        product = Product(name=name, category=category_obj)
+        product.save()
+        product_obj = Product.objects.latest('id')
+        add_price(product_obj, price)
+        change_quantity(product_obj, quantity)
+        return redirect(reverse('view_product'))
+
+def add_price(product_obj, price):
+    ProductPrice.objects.filter(product = product_obj).update(is_current=False)
+    price_obj = ProductPrice(price=price, product=product_obj)
+    price_obj.save()
+
+def change_quantity(product_obj, quantity):
+    ProductQuantity.objects.update_or_create(product=product_obj, defaults={'quantity': quantity})
+    
+def delete_product(request, id):
+    if request.method == "GET":
+        product = Product.objects.get(pk=id)
+        ProductPrice.objects.filter(product=product).delete()
+        ProductQuantity.objects.filter(product=product).delete()
+        product.delete()
+        return redirect(reverse('view_product'))
+
+
+def update_product(request, id):
+    if request.method == "POST":
+        if request.POST['type'] == "details_change":
+            name = request.POST['name']
+            quantity = request.POST['quantity']
+            price = request.POST['price']
+            Product.objects.filter(id=id).update(name=name)
+            product = Product.objects.get(pk=id)
+            change_quantity(product, quantity)
+            add_price(product, price)
+            return redirect(reverse('view_product_single', kwargs={'id':id}))
+
+def view_product_single(request, id):
+    if request.method == "GET":
+        product = Product.objects.get(pk=id)
+        price = ProductPrice.objects.get(product=product, is_current=True)
+        quantity = ProductQuantity.objects.get(product=product)
+        return render(request, "product_single.html", {'product':product, 'price':price, 'quantity':quantity})
 
 ''' Product functions finish '''
