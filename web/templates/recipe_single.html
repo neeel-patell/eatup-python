@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form class="container text-center" action="{% url 'update_recipe' recipe.id %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="type" value="image_change">
+        <img class="img-thumbnail" src="/media/images/recipe/{{ recipe.id }}.jpg">
+        <div class="input-group mt-3">
+            <input type="file" name="image" class="form-control" accept="image/*">
+            <input type="submit" class="btn btn-danger" value="Change Image"></button>
+        </div>
+    </form>
+    <form class="mt-5 card p-4 border-primary" action="{% url 'update_recipe' recipe.id %}" method="post">
+        <h6 class="mb-4">General Details</h6>
+        {% csrf_token %}
+        <input type="hidden" name="type" value="details_change">
+        <input class="form-control" type="text" name="name" value="{{ recipe.name }}" placeholder="Enter new Name">
+        <div class="input-group mt-3">
+            <input type="number" class="form-control" name="minute" min="1" max="240" value="{{ minutes }}" placeholder="Enter valid minutes">
+            <input type="number" class="form-control" name="second" min="0" max="59" value="{{ seconds }}" placeholder="Enter valid seconds">
+        </div>
+        <div>
+            <button class="btn btn-danger mt-3" type="submit">Change Details</button>
+        </div>
+    </form>
+    {% if recipe_description == None %}
+    <form class="mt-5 card p-4 border-primary" action="{% url 'add_recipe_description' recipe.id %}" method="post">
+        <h6 class="mb-4">Recipe Description Details</h6>
+        {% csrf_token %}
+        <textarea class="form-control" name="description" rows="10" placeholder="Write description here..."></textarea>
+        <div>
+            <button class="btn btn-danger mt-3" type="submit">Add Description</button>
+        </div>
+    </form>
+    {% else %}
+    <form class="mt-5 card p-4 border-primary" action="{% url 'update_recipe' recipe.id %}" method="post">
+        <h6 class="mb-4">Recipe Description Details</h6>
+        {% csrf_token %}
+        <input type="hidden" name="type" value="description_change">
+        <textarea class="form-control" name="description" rows="10" placeholder="Write description here...">{{ recipe_description.description }}</textarea>
+        <div>
+            <button class="btn btn-danger mt-3" type="submit">Change Description</button>
+        </div>
+    </form>
+    {% endif %}
+    {% if recipe_precaution == None %}
+    <form class="mt-5 card p-4 border-primary" action="{% url 'add_recipe_precaution' recipe.id %}" method="post">
+        <h6 class="mb-4">Recipe Precautions Details</h6>
+        {% csrf_token %}
+        <input type="text" class="form-control" name="message" placeholder="Enter message for notification" required>
+        <div class="input-group mt-3">
+            <input type="number" class="form-control" name="hour" min="1" max="23" placeholder="Enter hour" required>
+            <input type="number" class="form-control" name="minute" min="0" max="59" placeholder="Enter minute" required>
+        </div>
+        <div>
+            <button class="btn btn-danger mt-3" type="submit">Add Message</button>
+        </div>
+    </form>
+    {% else %}
+    <form class="mt-5 card p-4 border-primary" action="{% url 'update_recipe' recipe.id %}" method="post">
+        <h6 class="mb-4">Recipe Precautions Details</h6>
+        {% csrf_token %}
+        <input type="hidden" name="type" value="message_change">
+        <input type="text" class="form-control" name="message" placeholder="Enter message for notification" value="{{ recipe_precaution.message }}" required>
+        <div class="input-group mt-3">
+            <input type="number" class="form-control" name="hour" min="1" max="23" placeholder="Enter hour" value="{{ precaution_hour }}" required>
+            <input type="number" class="form-control" name="minute" min="0" max="59" placeholder="Enter minute" value="{{ precaution_minute }}" required>
+        </div>
+        <div>
+            <button class="btn btn-danger mt-3" type="submit">Change Message</button>
+        </div>
+    </form>
+    {% endif %}
+
+    <div class="card p-4 border-primary mt-5">
+        <h6 class="mb-4">Recipe Step Details</h6>
+        <table class="table table-bordered text-center">
+            <thead class="h6">
+                <tr>
+                    <td>Index</td>
+                    <td>Description</td>
+                    <td>Wait after</td>
+                    <td>Action</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for step in recipe_steps %}
+                    <tr>
+                        <td>{{ step.index }}</td>
+                        <td>{{ step.description }}</td>
+                        <td>{{ step.min_wait }}</td>
+                        <td><button class="btn p-0 btn-link text-decoration-none" onclick='if(confirm("Do You want to delete ?")){ location.href="{% url 'remove_recipe_step' step.id %}" }'>Remove Step</button></td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center font-monospace">No steps added, Please Add recipe steps ...</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <form action="{% url 'add_recipe_step' recipe.id %}" method="post">
+            {% csrf_token %}
+            <div class="input-group mt-3">
+                <input type="number" name="index" min="1" class="form-control" placeholder="Select Index">
+                <input type="text" name="description" class="form-control w-25" placeholder="Write Step Description">
+                <input type="number" name="min_wait" min="0" max="9999" class="form-control" placeholder="Enter wait after step in minutes">
+                <button class="btn btn-success">Add Step</button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="card p-4 border-primary mt-5">
+        <h6 class="mb-4">Recipe Ingredients Details</h6>
+        <table class="table table-bordered text-center">
+            <thead class="h6">
+                <tr>
+                    <td>Product</td>
+                    <td>Weight</td>
+                    <td>Litre</td>
+                    <td>spoon</td>
+                    <td>cup</td>
+                    <td>Quantity</td>
+                    <td>Action</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ingredient in recipe_ingredients %}
+                    <tr>
+                        <td>{{ ingredient.recipe_product_name.name }}</td>
+                        <td>{{ ingredient.weight }}</td>
+                        <td>{{ ingredient.litre }}</td>
+                        <td>{{ ingredient.spoon }}</td>
+                        <td>{{ ingredient.cup }}</td>
+                        <td>{{ ingredient.quantity }}</td>
+                        <td><button class="btn p-0 btn-link text-decoration-none" onclick='if(confirm("Do You want to delete ?")){ location.href="{% url 'remove_recipe_ingredient' ingredient.id %}" }'>Remove Ingredient</button></td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center font-monospace">No ingredients added, Please Add recipe ingredients ...</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <form action="{% url 'add_recipe_ingredient' recipe.id %}" method="post">
+            {% csrf_token %}
+            <div class="input-group mt-3">
+                <datalist id="dummy_product_list">
+                    {% for product in recipe_dummy_products %}
+                    <option value="{{ product.id }}">{{ product.name }}</option>
+                    {% endfor %}
+                </datalist>
+                <input type="text" class="form-control" list="dummy_product_list" name="product" placeholder="Select Product" required>
+                <input type="text" class="form-control" maxlength="7" name="weight" placeholder="Weight in kilogram" required>
+                <input type="text" class="form-control" maxlength="7" name="litre" placeholder="Litre" required>
+                <input type="text" class="form-control" maxlength="6" name="spoon" placeholder="spoon" required>
+                <input type="text" class="form-control" maxlength="6" name="cup" placeholder="cup" required>
+                <input type="number" class="form-control" min="0" max="50" name="quantity" placeholder="Number of quantity of product" required>
+                <button class="btn btn-success">Add Ingredient</button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="mt-5 container text-center">
+        <button class="btn btn-warning rounded-pill" onclick="location.href='{% url 'delete_recipe' recipe.id %}'"><i class="fas fa-minus-circle"></i> Remove Product</button>
+    </div>
+{% endblock %}
