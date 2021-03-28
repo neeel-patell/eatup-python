@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
-import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -88,7 +87,7 @@ DATABASES = {
         'NAME': 'eatup',
         'USER' : 'root',
         'PASSWORD' : 'Raka@1211',
-        'HOST' : 'localhost'
+        'HOST' : '3.6.100.169'
     }
 }
 
@@ -132,5 +131,3 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
-django_heroku.settings(locals())
