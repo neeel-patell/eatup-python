@@ -11,8 +11,8 @@ def register_user(request):
     if request.method == 'POST':
         mobile = request.POST['mobile']
         email = request.POST['email']
-        password = sha256(request.POST['password'].encode())
-        user = User(mobile=mobile, email=email, password=password.hexdigest())
+        password = request.POST['password']
+        user = User(mobile=mobile, email=email, password=password)
         response = {}
         if User.objects.filter(email=email).exists():
             response = {'status':'fail'}
@@ -26,8 +26,8 @@ def register_user(request):
 def login_user(request):
     if request.method == 'POST':
         email = request.POST['email']
-        password = sha256(request.POST['password'].encode())
-        if User.objects.filter(email=email, password=password.hexdigest()).exists():
+        password = request.POST['password']
+        if User.objects.filter(email=email, password=password).exists():
             response = {'status':'pass'}
         else:
             response = {'status':'fail'}
