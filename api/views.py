@@ -15,12 +15,12 @@ def register_user(request):
         user = User(mobile=mobile, email=email, password=password)
         response = {}
         if User.objects.filter(email=email).exists():
-            response = {'status':'fail'}
+            response = {'status':1}
         elif User.objects.filter(mobile=mobile).exists():
-            response = {'status':'fail'}
+            response = {'status':2}
         else:
             user.save()
-            response = {'status':'pass'}
+            response = {'status':0}
         return HttpResponse(json.dumps(response))
 
 def login_user_via_email(request):
