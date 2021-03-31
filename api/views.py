@@ -23,11 +23,21 @@ def register_user(request):
             response = {'status':'pass'}
         return HttpResponse(json.dumps(response))
 
-def login_user(request):
+def login_user_via_email(request):
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
         if User.objects.filter(email=email, password=password).exists():
+            response = {'status':'pass'}
+        else:
+            response = {'status':'fail'}
+        return JsonResponse(response, safe=False)
+
+def login_user_via_mobile(request):
+    if request.method == 'POST':
+        mobile = request.POST['email']
+        password = request.POST['password']
+        if User.objects.filter(mobile=mobile, password=password).exists():
             response = {'status':'pass'}
         else:
             response = {'status':'fail'}
