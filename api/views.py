@@ -38,4 +38,4 @@ def login_user(request):
 def get_all_recipe_category(request):
     if request.method == "GET":
         category = list(RecipeCategory.objects.values().order_by('name'))
-        return JsonResponse(category, safe=False)
+        return JsonResponse({'data':category}, safe=False)
