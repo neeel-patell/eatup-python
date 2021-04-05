@@ -60,9 +60,10 @@ def get_recipe_by_category(request, category):
             minute = total // 60 % 60
             second = total % 60
             if hour > 0:
-                duration = "{} Hour {} Minutes".format(hour, minute)
+                duration = "{} Hour".format(hour) if minute == 0 else "{} Hour {} Minute".format(hour, minute)
             else:
-                duration = "{} Minute {} Seconds".format(minute, second)
+                duration = "{} Minute".format(minute) if second == 0 else "{} Minute {} Seconds".format(minute, second)
+                
             recipies.append({'id':recipe.id, 'name':recipe.name.upper(), 'rating':recipe.rating, 'duration':duration})
 
         return JsonResponse({'data':recipies}, safe=False)
