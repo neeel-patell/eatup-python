@@ -37,3 +37,14 @@ class HomeUser(Model):
 
     def __str__(self):
         return self.user.email
+
+class ForgotPasswordToken(Model):
+    user = ForeignKey(User, on_delete=CASCADE)
+    token = CharField(null=False, max_length=64)
+    created_on = DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "forgot_password_token"
+
+    def __str__(self):
+        return self.user.email
