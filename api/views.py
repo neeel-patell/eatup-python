@@ -46,6 +46,16 @@ def login_user_via_email(request):
             response = {'status':'fail'}
         return JsonResponse(response, safe=False)
 
+def login_user_via_email_without_mail(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+        if User.objects.filter(email=email, password=password).exists():
+            response = {'status':'pass'}
+        else:
+            response = {'status':'fail'}
+        return JsonResponse(response, safe=False)
+
 def login_user_via_mobile(request):
     if request.method == 'POST':
         mobile = request.POST['email']
