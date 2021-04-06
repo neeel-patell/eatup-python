@@ -1,12 +1,9 @@
-from django.http.response import HttpResponse
 from django.shortcuts import render
 from recipe.models import *
 from user.models import *
-import json
 from hashlib import sha256
 from django.http import JsonResponse
-import datetime
-
+from eatup_api import views as main_view
 
 def register_user(request):
     if request.method == 'POST':
@@ -22,6 +19,14 @@ def register_user(request):
         else:
             user.save()
             response = {'status':'0'}
+            email_html = """\
+            <h4 style='text-align: center'>New on EatUP</h4>
+            <h6>
+                Thank you for registering on EatUp, You will enjoy the recipe recommendation and taste of recipe 
+                shown in our app, please provide feedback on recipe so we can deliver more better than this...
+            </h6>
+            """
+            main_view.send_mail(email, "Registration", html=email_html)
         return JsonResponse(response, safe=False)
 
 def login_user_via_email(request):
@@ -30,6 +35,13 @@ def login_user_via_email(request):
         password = request.POST['password']
         if User.objects.filter(email=email, password=password).exists():
             response = {'status':'pass'}
+            email_html = """\
+            <h4 style='text-align: center'>New Login</h4>
+            <h6>
+                Someone has logged in with email <span style="color:red">{}</span>, If you've not logged in than kindly change your password from profile section
+            </h6>
+            """.format(email)
+            main_view.send_mail(email, "Login attempt", html=email_html)
         else:
             response = {'status':'fail'}
         return JsonResponse(response, safe=False)
