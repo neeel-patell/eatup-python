@@ -365,6 +365,7 @@ def change_user_password(request):
         user = ForgotPasswordToken.objects.get(token=token)
         email = user.user.email
         User.objects.filter(email=email).update(password=password.hexdigest())
+        ForgotPasswordToken.objects.filter(token=token).delete()
         return render(request, "forgot_password_changed_success.html")
 
 ''' User forgot password ends '''
