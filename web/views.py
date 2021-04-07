@@ -354,7 +354,7 @@ def user_forgot_password(request, token):
             time_difference = (now - date).seconds
             if(time_difference > 1800):
                 return render(request, "forgot_password_changed_error.html", {'error':"Please finish operation early, you are trying after 30 minutes from link recieved on email"})
-            return render(request, "forgot_password.html", {'token':token.token})
+            return render(request, "forgot_password.html", {'token':token})
         else:
             return render(request, "forgot_password_changed_error.html", {'error':"Please try forgot password again from the EatUP app, your link is expire"})
 
