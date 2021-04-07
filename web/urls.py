@@ -33,4 +33,7 @@ urlpatterns = [
     path("recipe/product", view_recipe_product, name="view_recipe_product"),
     path("recipe/product/add", add_recipe_product, name="add_recipe_product"),
     path("recipe/product/<int:id>/delete", delete_recipe_product, name="delete_recipe_product"),
+
+    path("user/password/forgot/<str:token>", user_forgot_password, name="user_forgot_password"),
+    path("user/password/change", change_user_password, name="change_user_password"),
 ]

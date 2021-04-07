@@ -40,8 +40,9 @@ class HomeUser(Model):
 
 class ForgotPasswordToken(Model):
     user = ForeignKey(User, on_delete=CASCADE)
-    token = CharField(null=False, max_length=64)
-    created_on = DateTimeField(auto_now=True)
+    token = CharField(null=False, max_length=32, primary_key=True)
+    created_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
 
     class Meta:
         db_table = "forgot_password_token"

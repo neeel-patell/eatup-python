@@ -1,10 +1,11 @@
-from django.http.response import HttpResponse
+from user.models import ForgotPasswordToken, User
 from django.shortcuts import redirect, render
 from recipe.models import *
 from django.urls import reverse
 import os
 import datetime
 from django.db.models import F
+import hashlib
 
 def home(request):
     return render(request, "home.html")
@@ -339,3 +340,21 @@ def delete_recipe_product(request, id):
         return redirect(reverse('view_recipe_product'))
 
 ''' Recipe Product name function finish '''
+
+
+''' User Forgot Password starts '''
+
+def user_forgot_password(request, token):
+    if request.method == "GET":
+        return render(request, "forgot_password.html", {'token':token})
+
+def change_user_password(request):
+    if request.method == "POST":
+        token = request.POST['token']
+        password = hashlib.sha256(request.POST['password'].encode())
+        user = ForgotPasswordToken.objects.get(token=token)
+        email = user.user.email
+        User.objects.filter(email=email).update(password=password)
+        return render(request, "forgot_password_changed_success.html")
+
+''' User forgot password ends '''
