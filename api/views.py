@@ -149,3 +149,69 @@ def get_recipe_by_category(request, category):
 
     else:
         return JsonResponse({'data':[]}, safe=False)
+
+def get_single_recipe(request, recipe_id, user_id):
+
+    steps = []
+    schedules = []
+    ingredients = []
+
+    recipe_query = Recipe.objects.get(pk=recipe_id)
+    description_query = RecipeDescription.objects.get(recipe=recipe_query)
+    steps_query = RecipeSteps.objects.filter(recipe=recipe_query).order_by('index')
+    schedule_query = RecipeSchedule.objects.filter(recipe=recipe_query, user_id=user_id).order_by('date')
+    ingredient_query = RecipeIngredient.objects.filter(recipe=recipe_query)
+
+    total = int(recipe_query.duration.total_seconds())
+    hour = total // 60 // 60
+    minute = total // 60 % 60
+    second = total % 60
+    if hour > 0:
+        duration = "{} Hour".format(hour) if minute == 0 else "{} Hour {} Minute".format(hour, minute)
+    else:
+        duration = "{} Minute".format(minute) if second == 0 else "{} Minute {} Seconds".format(minute, second)
+
+    for step in steps_query:
+        steps.append({'index':step.index, 'description':step.description, 'wait':step.min_wait})
+
+    for schedule in schedule_query:
+        if schedule.meal == 0:
+            meal = "Breakfast"
+        elif schedule.meal == 1:
+            meal = "Lunch"
+        else:
+            meal = "Dinner"
+        schedules.append({'description': "Scheduled on {} for {}".format(schedule.date, meal)})
+
+    for ingredient in ingredient_query:
+        weight = ""
+        if ingredient.weight != 0:
+            if(ingredient.weight < 0):
+                weight = weight + str(int(ingredient.weight*1000)) + " Grams"
+            else:
+                weight = weight + "{} Kilo".format(ingredient.weight)
+        elif ingredient.litre != 0:
+            if(ingredient.litre < 0):
+                weight = weight + str(int(ingredient.litre*1000)) + " ML"
+            else:
+                weight = weight + "{} L".format(ingredient.litre)
+        elif ingredient.spoon != 0:
+            weight = weight + "{} Spoon".format(ingredient.spoon)
+        elif ingredient.cup != 0:
+            weight = weight + "{} Cup".format(ingredient.cup)
+        elif ingredient.quantity:
+            weight = weight + "{} Pieces".format(ingredient.quantity)
+
+        ingredients.append({'name':ingredient.recipe_product_name.name, 'weight':weight})
+
+    return JsonResponse({
+        'schedule':schedules,
+        'step':steps,
+        'recipe':{
+            'name':recipe_query.name, 
+            'duration':duration, 
+            'description':description_query.description,
+            'rating':recipe_query.rating,
+        },
+        'ingredient':ingredients
+    }, safe=False)

@@ -1,5 +1,6 @@
 import decimal
 from typing import Text
+from user.models import User
 from django.db.models import *
 from product.models import *
 
@@ -87,3 +88,16 @@ class RecipeIngredient(Model):
     
     def __str__(self):
         return self.recipe.name
+        
+class RecipeSchedule(Model):
+    recipe = ForeignKey(Recipe, on_delete=RESTRICT)
+    user = ForeignKey(User, on_delete=CASCADE)
+    date = DateField(null=False)
+    meal = DecimalField(null=False, max_digits=1, decimal_places=0)
+    updated_at = DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "recipe_schedule"
+
+    def __str__(self):
+        return "{} - {}".format(self.user.name, self.recipe.name)
