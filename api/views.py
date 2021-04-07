@@ -87,9 +87,9 @@ def forgot_password_email(request, email):
                 The below is link to change your password for your user account on EatUP, You can change password from there and Ignore email
                 if you have not sent the forgot password reset link, It will be valid for next 30 Minutes ...
 
-                <a href="http://3.6.10.169/user/password/forgot/{}">Click Here</a>
+                <a href="http://3.6.100.169/user/password/forgot/{token}">http://3.6.100.169/user/password/forgot/{token}</a>
             </h6>
-        """.format(token)
+        """.format(token=token)
         main_view.send_mail(email, "Password Change", html=email_html)
         
         return JsonResponse({'status':1}, safe=False)
@@ -116,9 +116,9 @@ def forgot_password_mobile(request, mobile):
                 The below is link to change your password for your user account on EatUP, You can change password from there and Ignore email
                 if you have not sent the forgot password reset link, It will be valid for next 30 Minutes ...
 
-                <a href="http://3.6.100.169/user/password/forgot/{}">Click Here</a>
+                <a href="http://3.6.100.169/user/password/forgot/{token}">http://3.6.100.169/user/password/forgot/{token}</a>
             </h6>
-        """.format(token)
+        """.format(token=token)
         main_view.send_mail(user.email, "Password Change", html=email_html)
         
         return JsonResponse({'status':1}, safe=False)
