@@ -348,13 +348,13 @@ def delete_recipe_product(request, id):
 def user_forgot_password(request, token):
     if request.method == "GET":
         if(ForgotPasswordToken.objects.filter(token=token).exists()):
-            token = ForgotPasswordToken.objects.get(token=token)
+            token_obj = ForgotPasswordToken.objects.get(token=token)
             now = datetime.datetime.strptime(str(datetime.datetime.now())[:19], "%Y-%m-%d %H:%M:%S")
-            date = datetime.datetime.strptime(str(token.created_at)[:19], "%Y-%m-%d %H:%M:%S")
+            date = datetime.datetime.strptime(str(token_obj.created_at)[:19], "%Y-%m-%d %H:%M:%S")
             time_difference = (now - date).seconds
             if(time_difference > 1800):
                 return render(request, "forgot_password_changed_error.html", {'error':"Please finish operation early, you are trying after 30 minutes from link recieved on email"})
-            return render(request, "forgot_password.html", {'token':token})
+            return render(request, "forgot_password.html", {'token':token.token})
         else:
             return render(request, "forgot_password_changed_error.html", {'error':"Please try forgot password again from the EatUP app, your link is expire"})
 
