@@ -348,6 +348,7 @@ def delete_recipe_product(request, id):
 def user_forgot_password(request, token):
     if request.method == "GET":
         if(ForgotPasswordToken.objects.filter(token=token).exists()):
+            token = ForgotPasswordToken.objects.get(token=token)
             now = datetime.datetime.strptime(str(datetime.datetime.now())[:19], "%Y-%m-%d %H:%M:%S")
             date = datetime.datetime.strptime(str(token.created_at)[:19], "%Y-%m-%d %H:%M:%S")
             time_difference = (now - date).seconds
