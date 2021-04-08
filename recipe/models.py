@@ -18,7 +18,6 @@ class Recipe(Model):
     name = CharField(max_length=30, null=False)
     category = ForeignKey(RecipeCategory, on_delete=DO_NOTHING)
     duration = DurationField(null=False)
-    rating = DecimalField(default=0, max_digits=1, decimal_places=0)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
     
@@ -94,10 +93,22 @@ class RecipeSchedule(Model):
     user = ForeignKey(User, on_delete=CASCADE)
     date = DateField(null=False)
     meal = DecimalField(null=False, max_digits=1, decimal_places=0)
-    updated_at = DateTimeField(auto_now_add=True)
+    updated_at = DateTimeField(auto_now=True)
 
     class Meta:
         db_table = "recipe_schedule"
+
+    def __str__(self):
+        return "{} - {}".format(self.user.name, self.recipe.name)
+
+class RecipeRating(Model):
+    user = ForeignKey(User, on_delete=CASCADE)
+    rating = DecimalField(max_digits=1, decimal_places=0)
+    recipe = ForeignKey(Recipe, on_delete=CASCADE)
+    updated_at = DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "recipe_rating"
 
     def __str__(self):
         return "{} - {}".format(self.user.name, self.recipe.name)

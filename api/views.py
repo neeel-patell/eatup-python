@@ -162,6 +162,14 @@ def get_single_recipe(request, recipe_id, user_id):
     steps_query = RecipeSteps.objects.filter(recipe=recipe_query).order_by('index')
     schedule_query = RecipeSchedule.objects.filter(recipe=recipe_query, user_id=user_id).order_by('date')
     ingredient_query = RecipeIngredient.objects.filter(recipe=recipe_query)
+    total_rating = RecipeRating.objects.filter(recipe=recipe_query).count()
+    average_rating = RecipeRating.objects.filter(recipe=recipe_query).aggregate(average=Avg('rating'))
+    
+    if RecipeRating.objects.filter(recipe=recipe_query, user_id=user_id).exists():
+        user_rating = RecipeRating.objects.get(recipe=recipe_query, user_id=user_id)
+        rating = user_rating.rating
+    else:
+        rating = 0
 
     total = int(recipe_query.duration.total_seconds())
     hour = total // 60 // 60
@@ -212,7 +220,9 @@ def get_single_recipe(request, recipe_id, user_id):
             'name':recipe_query.name, 
             'duration':duration, 
             'description':description_query.description,
-            'rating':recipe_query.rating,
+            'rating': average_rating['average'] if average_rating['average'] != None else 0,
+            'total_rating':total_rating
         },
+        'rating':rating,
         'ingredient':ingredients
     }, safe=False)
