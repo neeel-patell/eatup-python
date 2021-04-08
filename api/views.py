@@ -144,7 +144,7 @@ def get_recipe_by_category(request, category):
             else:
                 duration = "{} Minute".format(minute) if second == 0 else "{} Minute {} Seconds".format(minute, second)
                 
-            recipies.append({'id':recipe.id, 'name':recipe.name.upper(), 'rating':recipe.rating, 'duration':duration})
+            recipies.append({'id':recipe.id, 'name':recipe.name.upper(), 'duration':duration})
 
         return JsonResponse({'data':recipies}, safe=False)
 
