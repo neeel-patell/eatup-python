@@ -18,7 +18,7 @@ def register_user(request):
             response = {'status':'2'}
         else:
             user.save()
-            response = {'status':'0'}
+            response = {'status':'0', 'user_id':User.objects.latest('id')}
             email_html = """\
             <h4 style='text-align: center'>New on EatUP</h4>
             <h6>
@@ -34,7 +34,8 @@ def login_user_via_email(request):
         email = request.POST['email']
         password = request.POST['password']
         if User.objects.filter(email=email, password=password).exists():
-            response = {'status':'pass'}
+            user = User.objects.get(email=email)
+            response = {'status':'pass', 'user_id':user.id}
             email_html = """\
             <h4 style='text-align: center'>New Login</h4>
             <h6>
