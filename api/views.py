@@ -190,7 +190,9 @@ def get_single_recipe(request, recipe_id, user_id):
             meal = "Lunch"
         else:
             meal = "Dinner"
-        schedules.append({'description': "Scheduled on {} for {}".format(schedule.date, meal)})
+
+        # schedule_string = str(schedule.date.day) + " " + str(schedule.date.month) + " " + str(schedule.date.year)
+        schedules.append({'description': "* Scheduled on {} for {}".format(schedule.date.strftime("%d %B %Y"), meal)})
 
     for ingredient in ingredient_query:
         weight = ""
