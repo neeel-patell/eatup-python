@@ -13,5 +13,5 @@ urlpatterns = [
     path('recipe/<int:category>', get_recipe_by_category, name='get_recipe_by_category'),
     path('recipe/view/<int:recipe_id>/<int:user_id>', get_single_recipe, name='get_single_recipe'),
 
-    path('recipe/rating/add/<int:recipe_id>/<int:user_id>', get_single_recipe, name='get_single_recipe'),
+    path('recipe/rating/add/<int:recipe_id>/<int:user_id>', add_recipe_rating, name='add_recipe_rating'),
 ]
