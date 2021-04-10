@@ -105,6 +105,7 @@ class RecipeRating(Model):
     user = ForeignKey(User, on_delete=CASCADE)
     rating = DecimalField(max_digits=1, decimal_places=0)
     recipe = ForeignKey(Recipe, on_delete=CASCADE)
+    feedback = CharField(max_length=150)
     updated_at = DateTimeField(auto_now=True)
 
     class Meta:
