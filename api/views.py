@@ -233,6 +233,6 @@ def add_recipe_rating(request, recipe_id, user_id):
     if request.method == "POST":
         rating = request.POST['rating']
         feedback = request.POST['feedback']
-        recipe_rating = RecipeRating(rating=rating, feedback=feedback, recipe_id=recipe_id, user_id=user_id)
+        recipe_rating = RecipeRating.objects.update_or_create(rating=rating, feedback=feedback, recipe_id=recipe_id, user_id=user_id)
         recipe_rating.save()
         return JsonResponse({'status':1}, safe=False)
