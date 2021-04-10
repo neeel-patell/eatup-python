@@ -168,9 +168,9 @@ def get_single_recipe(request, recipe_id, user_id):
         
         if RecipeRating.objects.filter(recipe=recipe_query, user_id=user_id).exists():
             user_rating = RecipeRating.objects.get(recipe=recipe_query, user_id=user_id)
-            rating = user_rating.rating
+            rating = {'rating':user_rating.rating, 'feedback':user_rating.feedback}
         else:
-            rating = 0
+            rating = {'rating':0, 'feedback':""}
 
         total = int(recipe_query.duration.total_seconds())
         hour = total // 60 // 60
