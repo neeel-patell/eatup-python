@@ -292,4 +292,37 @@ def get_user_home(request, user_id):
         
         return JsonResponse(response, safe=False)
 
+def join_home(request):
+    if request.method == "POST":
+        user = User.objects.get(pk=request.POST['user'])
+        home = Home.objects.get(name=request.POST['home'])
+        response = {}
+        if(Home.objects.filter(pk=home.id).exists() == False):
+            response.update({'status':0})
+        else:
+            home_user = HomeUser(user=user, home=home)
+            home_user.save()
+            response.update({'status':1})
+        return JsonResponse(response, safe=False)
+
+def create_home(request):
+    if request.method == "POST":
+        name = request.POST['name']
+        user = User.objects.get(pk=request.POST['user'])
+
+        response = {}
+
+        if(Home.objects.filter(name=name).exists()):
+            response.update({'status':0})
+        else:
+            home = Home(name=name, root_user=user)
+            home.save()
+
+            home_user = HomeUser(user=user, home=home, is_root=True)
+            home_user.save()
+
+            response.update({'status':1, 'home':home.id})
+
+        return JsonResponse(response, safe=False)
+
 ''' home end '''
