@@ -31,6 +31,7 @@ class Home(Model):
 class HomeUser(Model):
     home = ForeignKey(Home, on_delete=RESTRICT)
     user = ForeignKey(User, on_delete=RESTRICT)
+    is_root = BooleanField(default=False)
 
     class Meta:
         db_table = "home_user"

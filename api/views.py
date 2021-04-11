@@ -5,6 +5,8 @@ from hashlib import sha256
 from django.http import JsonResponse, response
 from eatup_api import views as main_view
 
+'''user login start '''
+
 def register_user(request):
     if request.method == 'POST':
         mobile = request.POST['mobile']
@@ -124,6 +126,9 @@ def forgot_password_mobile(request, mobile):
         
         return JsonResponse({'status':1}, safe=False)
 
+'''user login end '''
+
+''' recipe start '''
 
 def get_all_recipe_category(request):
     if request.method == "GET":
@@ -239,3 +244,52 @@ def add_recipe_rating(request, recipe_id, user_id):
             recipe_rating = RecipeRating(rating=rating, feedback=feedback, recipe_id=recipe_id, user_id=user_id)
             recipe_rating.save()
         return JsonResponse({'status':1}, safe=False)
+
+''' recipe end '''
+
+''' home start '''
+
+def create_home(request):
+    if request.method == "POST":
+        name = request.POST['name']
+        user_id = request.POST['user']
+
+        if Home.objects.filter(name=name).exists() == True:
+            response = {'status':0}
+        
+        else:
+            home = Home(name=name, user_id=user_id)
+            home.save()
+            response = {'status':1}
+
+        JsonResponse(response, safe=False)
+
+def get_user_home(request, user_id):
+    if request.method == "GET":
+        user_list = []
+        home_list = {}
+
+        if HomeUser.objects.filter(user_id=user_id).exists():
+            home_user = HomeUser.objects.get(user_id=user_id)
+            if home_user.is_root == True:
+                response = {'root':1, 'home_exist':1}
+            else:
+                response = {'root':0, 'home_exist':1}
+            users = HomeUser.objects.filter(home_id=home_user.home_id)
+
+            for user in users:
+                user_list.append({'id':user.user_id, 'email':user.user.email, 'mobile':user.user.mobile})
+
+            if Home.objects.filter(pk=home_user.home_id).exists():
+                home = Home.objects.get(pk=home_user.home_id)
+                home_list.update({'name':home.name})
+            else:
+                home_list.update({'name':""})
+        
+            response.update({'user':user_list, 'home':home_list})
+        else:
+            response = {'home_exist':0}
+        
+        return JsonResponse(response, safe=False)
+
+''' home end '''
