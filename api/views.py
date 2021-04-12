@@ -276,7 +276,7 @@ def get_recipe_schedule(request, user_id):
                 meal = "Lunch"
             else:
                 meal = "Dinner"
-            schedule_list.append({'recipe_name':schedule.recipe.name, 'date':schedule.date.strftime("%d %B %Y"), 'meal':meal})
+            schedule_list.append({'id':schedule.id, 'recipe_name':schedule.recipe.name, 'date':schedule.date.strftime("%d %B %Y"), 'meal':meal})
         
         return JsonResponse({'schedule':schedule_list}, safe=False)
 ''' recipe end '''
