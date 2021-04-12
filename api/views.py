@@ -2,8 +2,9 @@ from django.shortcuts import render
 from recipe.models import *
 from user.models import *
 from hashlib import sha256
-from django.http import JsonResponse, response
+from django.http import JsonResponse
 from eatup_api import views as main_view
+from datetime import date
 
 '''user login start '''
 
@@ -167,7 +168,7 @@ def get_single_recipe(request, recipe_id, user_id):
         description_query = RecipeDescription.objects.get(recipe=recipe_query)
         steps_query = RecipeSteps.objects.filter(recipe=recipe_query).order_by('index')
         home = HomeUser.objects.get(user_id=user_id)
-        schedule_query = RecipeSchedule.objects.filter(recipe=recipe_query, home_id=home.home_id).order_by('date')
+        schedule_query = RecipeSchedule.objects.filter(recipe=recipe_query, home_id=home.home_id, date__gte=date.today()).order_by('date')
         ingredient_query = RecipeIngredient.objects.filter(recipe=recipe_query)
         total_rating = RecipeRating.objects.filter(recipe=recipe_query).count()
         average_rating = RecipeRating.objects.filter(recipe=recipe_query).aggregate(average=Avg('rating'))
@@ -258,7 +259,26 @@ def schedule_recipe(request):
         recipe_schedule.save()
 
         return JsonResponse({'status':1}, safe=False)
+
+def get_recipe_schedule(request, user_id):
+    if request.method == "GET":
+        home = Home.objects.get(id = HomeUser.objects.get(user_id=user_id).home_id)
+        schedule_list = []
+
+        today = date.today()
+        schedule_query = RecipeSchedule.objects.filter(home=home, date__gte = today)
+
+        for schedule in schedule_query:
+            meal = ""
+            if schedule.meal == 0:
+                meal = "Breakfast"
+            elif schedule.meal == 1:
+                meal = "Lunch"
+            else:
+                meal = "Dinner"
+            schedule_list.append({'recipe_name':schedule.recipe.name, 'date':schedule.date.strftime("%d %B %Y"), 'meal':meal})
         
+        return JsonResponse({'schedule':schedule_list}, safe=False)
 ''' recipe end '''
 
 ''' home start '''
