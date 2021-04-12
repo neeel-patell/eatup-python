@@ -1,6 +1,6 @@
 import decimal
 from typing import Text
-from user.models import User
+from user.models import Home, User
 from django.db.models import *
 from product.models import *
 
@@ -90,7 +90,7 @@ class RecipeIngredient(Model):
         
 class RecipeSchedule(Model):
     recipe = ForeignKey(Recipe, on_delete=RESTRICT)
-    user = ForeignKey(User, on_delete=CASCADE)
+    home = ForeignKey(Home, on_delete=CASCADE)
     date = DateField(null=False)
     meal = DecimalField(null=False, max_digits=1, decimal_places=0)
     updated_at = DateTimeField(auto_now=True)

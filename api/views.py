@@ -245,6 +245,19 @@ def add_recipe_rating(request, recipe_id, user_id):
             recipe_rating.save()
         return JsonResponse({'status':1}, safe=False)
 
+def schedule_recipe(request):
+    if request.method == "POST":
+        home_user = HomeUser.objects.get(user_id=request.POST['user'])
+        home = Home.objects.get(pk=home_user.home_id)
+        recipe = Recipe.objects.get(pk=request.POST['recipe'])
+        meal = request.POST['meal']
+        date = request.POST['date']
+
+        recipe_schedule = RecipeSchedule(home=home, recipe=recipe, meal=meal, date=date)
+        recipe_schedule.save()
+
+        return JsonResponse({'status':1}, safe=False)
+        
 ''' recipe end '''
 
 ''' home start '''
