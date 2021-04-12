@@ -14,6 +14,7 @@ urlpatterns = [
     path('recipe/view/<int:recipe_id>/<int:user_id>', get_single_recipe, name='get_single_recipe'),
     path('recipe/schedule', schedule_recipe, name='schedule_recipe'),
     path('recipe/schedule/get/<int:user_id>', get_recipe_schedule, name='get_recipe_schedule'),
+    path('recipe/schedule/remove/<int:schedule_id>', remove_recipe_schedule, name='remove_recipe_schedule'),
     path('recipe/rating/add/<int:recipe_id>/<int:user_id>', add_recipe_rating, name='add_recipe_rating'),
 
     path('home/create', create_home, name='create_home'),

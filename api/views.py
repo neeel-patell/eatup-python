@@ -266,7 +266,7 @@ def get_recipe_schedule(request, user_id):
         schedule_list = []
 
         today = date.today()
-        schedule_query = RecipeSchedule.objects.filter(home=home, date__gte = today)
+        schedule_query = RecipeSchedule.objects.filter(home=home, date__gte = today).order_by('date')
 
         for schedule in schedule_query:
             meal = ""
@@ -279,6 +279,12 @@ def get_recipe_schedule(request, user_id):
             schedule_list.append({'id':schedule.id, 'recipe_name':schedule.recipe.name, 'date':schedule.date.strftime("%d %B %Y"), 'meal':meal})
         
         return JsonResponse({'schedule':schedule_list}, safe=False)
+
+def remove_recipe_schedule(request, schedule_id):
+    if request.method == "GET":
+        RecipeSchedule.objects.filter(pk=schedule_id).delete()
+        return JsonResponse({'status':1}, safe=False)
+
 ''' recipe end '''
 
 ''' home start '''
