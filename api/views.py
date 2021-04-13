@@ -2,7 +2,7 @@ from django.shortcuts import render
 from recipe.models import *
 from user.models import *
 from hashlib import sha256
-from django.http import JsonResponse
+from django.http import JsonResponse, response
 from eatup_api import views as main_view
 from datetime import date
 
@@ -371,12 +371,49 @@ def create_home(request):
 
         return JsonResponse(response, safe=False)
 
+def add_user_to_home(request):
+    if request.method == "POST":
+        response = {}
+        if User.objects.filter(email=request.POST['email'], mobile=request.POST['mobile']).exists():
+            user = User.objects.get(email=request.POST['email'], mobile=request.POST['mobile'])
+            adder_user = User.objects.get(pk=request.POST['user_id'])
+            home = HomeUser.objects.get(user=adder_user).home
+            home_user = HomeUser(home=home, user=user)
+            home_user.save()
+            response = {'status':0}
+
+        else:
+            response = {'status':0}
+
+        return JsonResponse(response, safe=False)
+
 ''' home end '''
 
 ''' expense splitter start '''
 
 def get_expense_splitter(request, user_id):
-    if request.method == "GET":
-        pass
+    if request.method == "POST":
+        expense_list = []
+        date1 = request.POST['date1']
+        date2 = request.POST['date2']
+
+        if Home.objects.filter(pk = HomeUser.objects.get(user_id=user_id).home_id).exists() == False:
+            expense_list = []
+        else:
+            home = Home.objects.get(pk = HomeUser.objects.get(user_id=user_id).home_id)
+            schedule_query = RecipeSchedule.objects.filter(home=home)
+
+            for schedule in schedule_query:
+                if RecipeMakeupCost.objects.filter(schedule=schedule_query).exists() == True:
+                    cost = RecipeMakeupCost.objects.get(schedule=schedule_query).cost
+                else:
+                    cost = 0
+
+                
+                
+
+        return JsonResponse({'expense':expense_list}, safe=False)
+
+        
 
 ''' expense splitter end '''

@@ -23,4 +23,5 @@ urlpatterns = [
     path('home/get/<int:user_id>', get_user_home, name='get_user_home'),
     path('home/create', create_home, name='create_home'),
     path('home/join', join_home, name='join_home'),
+    path('home/user/add', add_user_to_home, name='add_user_to_home'),
 ]
