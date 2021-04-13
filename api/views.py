@@ -380,7 +380,7 @@ def add_user_to_home(request):
             home = HomeUser.objects.get(user=adder_user).home
             home_user = HomeUser(home=home, user=user)
             home_user.save()
-            response = {'status':0}
+            response = {'status':1}
 
         else:
             response = {'status':0}
