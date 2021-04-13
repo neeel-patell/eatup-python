@@ -167,8 +167,11 @@ def get_single_recipe(request, recipe_id, user_id):
         recipe_query = Recipe.objects.get(pk=recipe_id)
         description_query = RecipeDescription.objects.get(recipe=recipe_query)
         steps_query = RecipeSteps.objects.filter(recipe=recipe_query).order_by('index')
-        home = HomeUser.objects.get(user_id=user_id)
-        schedule_query = RecipeSchedule.objects.filter(recipe=recipe_query, home_id=home.home_id, date__gte=date.today()).order_by('date')
+        if HomeUser.objects.filter(user_id=user_id).exists() == True:
+            home = HomeUser.objects.get(user_id=user_id)
+            schedule_query = RecipeSchedule.objects.filter(recipe=recipe_query, home_id=home.home_id, date__gte=date.today()).order_by('date')
+        else:
+            schedule_query = []
         ingredient_query = RecipeIngredient.objects.filter(recipe=recipe_query)
         total_rating = RecipeRating.objects.filter(recipe=recipe_query).count()
         average_rating = RecipeRating.objects.filter(recipe=recipe_query).aggregate(average=Avg('rating'))
@@ -261,12 +264,15 @@ def schedule_recipe(request):
         return JsonResponse({'status':1}, safe=False)
 
 def get_recipe_schedule(request, user_id):
+    schedule_list = []
     if request.method == "GET":
-        home = Home.objects.get(id = HomeUser.objects.get(user_id=user_id).home_id)
-        schedule_list = []
+        if HomeUser.objects.filter(user_id=user_id).exists() == True:
+            home = Home.objects.get(id = HomeUser.objects.get(user_id=user_id).home_id)
 
-        today = date.today()
-        schedule_query = RecipeSchedule.objects.filter(home=home, date__gte = today).order_by('date')
+            today = date.today()
+            schedule_query = RecipeSchedule.objects.filter(home=home, date__gte = today).order_by('date')
+        else:
+            schedule_query = []
 
         for schedule in schedule_query:
             meal = ""
@@ -366,3 +372,11 @@ def create_home(request):
         return JsonResponse(response, safe=False)
 
 ''' home end '''
+
+''' expense splitter start '''
+
+def get_expense_splitter(request, user_id):
+    if request.method == "GET":
+        pass
+
+''' expense splitter end '''
