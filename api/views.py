@@ -387,6 +387,16 @@ def add_user_to_home(request):
 
         return JsonResponse(response, safe=False)
 
+def remove_user_from_home(request, user_id):
+    if request.method == "GET":
+        HomeUser.objects.filter(user_id=user_id).delete()
+        return JsonResponse({'status':1}, safe=False)
+
+def check_user_role(request, user_id):
+    if request.method == "GET":
+        home_user = HomeUser.objects.get(user_id=user_id)
+        return JsonResponse({'is_root':home_user.is_root}, safe=False)
+
 ''' home end '''
 
 ''' expense splitter start '''
