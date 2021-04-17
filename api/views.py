@@ -376,11 +376,14 @@ def add_user_to_home(request):
         response = {}
         if User.objects.filter(email=request.POST['email'], mobile=request.POST['mobile']).exists():
             user = User.objects.get(email=request.POST['email'], mobile=request.POST['mobile'])
-            adder_user = User.objects.get(pk=request.POST['user_id'])
-            home = HomeUser.objects.get(user=adder_user).home
-            home_user = HomeUser(home=home, user=user)
-            home_user.save()
-            response = {'status':1}
+            if HomeUser.objects.filter(user=user).exists():
+               response = {'status':2}
+            else: 
+                adder_user = User.objects.get(pk=request.POST['user_id'])
+                home = HomeUser.objects.get(user=adder_user).home
+                home_user = HomeUser(home=home, user=user)
+                home_user.save()
+                response = {'status':1}
 
         else:
             response = {'status':0}
