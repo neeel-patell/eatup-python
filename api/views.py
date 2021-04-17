@@ -400,6 +400,25 @@ def check_user_role(request, user_id):
         home_user = HomeUser.objects.get(user_id=user_id)
         return JsonResponse({'is_root':home_user.is_root}, safe=False)
 
+def exit_home(request, user_id):
+    if request.method == "GET":
+        user_home = HomeUser.objects.get(user_id=user_id)
+        home_id = user_home.home.id
+        user_home.delete()
+        response = {}
+        if user_home.is_root:
+            if(HomeUser.objects.filter(home_id=home_id).exists() == False):
+                Home.objects.filter(pk=home_id).delete()
+                response = {'status':1}
+            else:
+                new_home_root = HomeUser.objects.filter(home_id=home_id).earliest("created_by")
+                HomeUser.objects.filter(home_id=home_id, user=new_home_root.user).update(is_root=True)
+                response = {'status':1}
+        else:
+            HomeUser.objects.filter(user_id=user_id).delete()
+            response = {'status':1}
+
+        return JsonResponse(response, safe=False)
 ''' home end '''
 
 ''' expense splitter start '''

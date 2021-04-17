@@ -32,7 +32,7 @@ class HomeUser(Model):
     home = ForeignKey(Home, on_delete=RESTRICT)
     user = ForeignKey(User, on_delete=RESTRICT)
     is_root = BooleanField(default=False)
-    created_by = DateTimeField(auto_now_add=True)
+    created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
 
     class Meta:
@@ -40,6 +40,7 @@ class HomeUser(Model):
 
     def __str__(self):
         return self.user.email
+
 
 class ForgotPasswordToken(Model):
     user = ForeignKey(User, on_delete=CASCADE)
