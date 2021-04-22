@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'api',
     'web',
     'user',
+    'expense',
 ]
 
 MIDDLEWARE = [
