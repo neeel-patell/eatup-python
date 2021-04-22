@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from recipe.models import *
 from user.models import *
+from expense.models import *
 from hashlib import sha256
 from django.http import JsonResponse, response
 from eatup_api import views as main_view
@@ -258,9 +259,25 @@ def schedule_recipe(request):
         meal = request.POST['meal']
         date = request.POST['date']
 
+        user_index = 0
+        user_list = []
+        while True:
+            if "user"+str(user_index) in request.POST.keys():
+                user_list.append(request.POST['user'+str(user_index)])
+                user_index = user_index + 1
+            else:
+                break
+
         recipe_schedule = RecipeSchedule(home=home, recipe=recipe, meal=meal, date=date)
         recipe_schedule.save()
 
+        expense = Expense(schdule=recipe_schedule, user=home_user.user, amount=0)
+        expense.save()
+
+        for user in user_list:
+            expense_user = ExpenseUser(expense=expense, user=User.objects.get(email=user))
+            expense_user.save()
+        
         return JsonResponse({'status':1}, safe=False)
 
 def get_recipe_schedule(request, user_id):
@@ -422,6 +439,10 @@ def exit_home(request, user_id):
 ''' home end '''
 
 ''' expense splitter start '''
+
+def update_expense(requset, schedule_id):
+    if requset.method == "POST":
+        amount = requset.POST['amount']
 
 
 ''' expense splitter end '''

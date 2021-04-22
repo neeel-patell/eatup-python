@@ -17,7 +17,7 @@ urlpatterns = [
     path('recipe/schedule/remove/<int:schedule_id>', remove_recipe_schedule, name='remove_recipe_schedule'),
     path('recipe/rating/add/<int:recipe_id>/<int:user_id>', add_recipe_rating, name='add_recipe_rating'),
 
-    path('expense/splitter/get/<int:user_id>', get_expense_splitter, name='get_expense_splitter'),
+    path('expense/splitter/update/<int:schedule_id>', update_expense, name='update_expense'),
 
     path('home/create', create_home, name='create_home'),
     path('home/get/<int:user_id>', get_user_home, name='get_user_home'),
