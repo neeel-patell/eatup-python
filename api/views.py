@@ -305,6 +305,9 @@ def get_recipe_schedule(request, user_id):
 
 def remove_recipe_schedule(request, schedule_id):
     if request.method == "GET":
+        expense = Expense.objects.get(schdule_id=schedule_id)
+        ExpenseUser.objects.filter(expense=expense).delete()
+        Expense.objects.filter(pk=expense.id).delete()
         RecipeSchedule.objects.filter(pk=schedule_id).delete()
         return JsonResponse({'status':1}, safe=False)
 
