@@ -423,29 +423,5 @@ def exit_home(request, user_id):
 
 ''' expense splitter start '''
 
-def get_expense_splitter(request, user_id):
-    if request.method == "POST":
-        expense_list = []
-        date1 = request.POST['date1']
-        date2 = request.POST['date2']
-
-        if Home.objects.filter(pk = HomeUser.objects.get(user_id=user_id).home_id).exists() == False:
-            expense_list = []
-        else:
-            home = Home.objects.get(pk = HomeUser.objects.get(user_id=user_id).home_id)
-            schedule_query = RecipeSchedule.objects.filter(home=home)
-
-            for schedule in schedule_query:
-                if RecipeMakeupCost.objects.filter(schedule=schedule_query).exists() == True:
-                    cost = RecipeMakeupCost.objects.get(schedule=schedule_query).cost
-                else:
-                    cost = 0
-
-                
-                
-
-        return JsonResponse({'expense':expense_list}, safe=False)
-
-        
 
 ''' expense splitter end '''

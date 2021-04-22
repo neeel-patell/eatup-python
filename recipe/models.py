@@ -113,14 +113,3 @@ class RecipeRating(Model):
 
     def __str__(self):
         return "{} - {}".format(self.user.name, self.recipe.name)
-
-class RecipeMakeupCost(Model):
-    schedule = ForeignKey(RecipeSchedule, on_delete=CASCADE)
-    cost = DecimalField(max_digits=6, decimal_places=2)
-    updated_at = DateTimeField(auto_now=True)
-
-    class Meta:
-        db_table = "recipe_makeup_cost"
-
-    def __str__(self):
-        return "{} - {} - {} - {}".format(self.schedule.recipe.name, self.schedule.date, self.schedule.meal, self.cost)
