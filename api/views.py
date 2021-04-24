@@ -446,20 +446,31 @@ def get_expense(request, user_id):
     if request.method == "GET":
         user_expense = {}
         expense_list = []
+        start_date, end_date = "", ""
         today = datetime.now()
         date_range = []
         if(today.day <= 15):
             date_range = [str(today.year)+"-"+str(today.month)+"-01", str(today.year)+"-"+str(today.month)+"-15"]
+            start_date = "01-"+str(today.month)+"-"+str(today.year)
+            end_date = "15-"+str(today.month)+"-"+str(today.year)
         else:
             if(today.month in [1,3,5,7,8,10,12]):
                 date_range = [str(today.year)+"-"+str(today.month)+"-16", str(today.year)+"-"+str(today.month)+"-31"]
+                start_date = "16-"+str(today.month)+"-"+str(today.year)
+                end_date = "31-"+str(today.month)+"-"+str(today.year)
             elif(today.month in [4,6,9,11]):
                 date_range = [str(today.year)+"-"+str(today.month)+"-16", str(today.year)+"-"+str(today.month)+"-30"]
+                start_date = "16-"+str(today.month)+"-"+str(today.year)
+                end_date = "30-"+str(today.month)+"-"+str(today.year)
             else:
                 if(today.year % 4 == 0):
                     date_range = [str(today.year)+"-"+str(today.month)+"-16", str(today.year)+"-"+str(today.month)+"-29"]
+                    start_date = "16-"+str(today.month)+"-"+str(today.year)
+                    end_date = "29-"+str(today.month)+"-"+str(today.year)
                 else:
                     date_range = [str(today.year)+"-"+str(today.month)+"-16", str(today.year)+"-"+str(today.month)+"-28"]
+                    start_date = "16-"+str(today.month)+"-"+str(today.year)
+                    end_date = "28-"+str(today.month)+"-"+str(today.year)
 
         home = HomeUser.objects.get(user_id=user_id).home
         schedule = RecipeSchedule.objects.filter(date__gte=date_range[0], date__lte=date_range[1], home=home)
@@ -481,7 +492,7 @@ def get_expense(request, user_id):
             })
         return JsonResponse({
             'expense':expense_list,
-            'start_date' : date_range[0], 'end_date' : date_range[1],
+            'date' : start_date + " to " + end_date
             }, safe=False)
 
 
