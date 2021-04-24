@@ -4,7 +4,7 @@ from expense.models import *
 from hashlib import sha256
 from django.http import JsonResponse
 from eatup_api import views as main_view
-from datetime import date
+from datetime import date, datetime
 
 '''user login start '''
 
@@ -444,9 +444,48 @@ def exit_home(request, user_id):
 
 def get_expense(request, user_id):
     if request.method == "GET":
-        pass
+        user_expense = {}
+        expense_list = []
+        today = datetime.now()
+        date_range = []
+        if(today.day <= 15):
+            date_range = [str(today.year)+"-"+str(today.month)+"-01", str(today.year)+"-"+str(today.month)+"-15"]
+        else:
+            if(today.month in [1,3,5,7,8,10,12]):
+                date_range = [str(today.year)+"-"+str(today.month)+"-16", str(today.year)+"-"+str(today.month)+"-31"]
+            elif(today.month in [4,6,9,11]):
+                date_range = [str(today.year)+"-"+str(today.month)+"-16", str(today.year)+"-"+str(today.month)+"-30"]
+            else:
+                if(today.year % 4 == 0):
+                    date_range = [str(today.year)+"-"+str(today.month)+"-16", str(today.year)+"-"+str(today.month)+"-29"]
+                else:
+                    date_range = [str(today.year)+"-"+str(today.month)+"-16", str(today.year)+"-"+str(today.month)+"-28"]
 
-def add_amount(request, schedule_id):
+        home = HomeUser.objects.get(user_id=user_id).home
+        schedule = RecipeSchedule.objects.filter(date__gte=date_range[0], date__lte=date_range[1], home=home)
+        expense_obj = Expense.objects.filter(schedule__in=schedule)
+
+        for obj in expense_obj:
+            expense_user_obj = ExpenseUser.objects.filter(expense = obj)
+            individual = obj.amount / expense_user_obj.count()
+            for user in expense_user_obj:
+                if user.user_id in user_expense.keys():
+                    user_expense[user.user_id] += individual
+                else:
+                    user_expense[user.user_id] = individual
+
+        for id in user_expense:
+            expense_list.append({
+                'email' : User.objects.get(pk=id).email,
+                'amount' : user_expense[id]
+            })
+        return JsonResponse({
+            'expense':expense_list,
+            'start_date' : date_range[0], 'end_date' : date_range[1],
+            }, safe=False)
+
+
+def add_amount_to_expense(request, schedule_id):
     if request.method == "POST":
         amount = request.POST['amount']
         Expense.objects.filter(schedule_id=schedule_id).update(amount=amount)
