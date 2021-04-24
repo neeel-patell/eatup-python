@@ -3,7 +3,7 @@ from recipe.models import *
 from user.models import *
 
 class Expense(Model):
-    schdule = ForeignKey(RecipeSchedule, on_delete=RESTRICT)
+    schedule = ForeignKey(RecipeSchedule, on_delete=RESTRICT)
     amount = DecimalField(max_digits=6, decimal_places=2, null=False)
     user = ForeignKey(User, on_delete=RESTRICT)
     created_at = DateTimeField(auto_now=True)
@@ -12,7 +12,7 @@ class Expense(Model):
         db_table = "expense"
 
     def __str__(self):
-        return "{} - {}".format(self.schdule.date, self.schdule.recipe.name)
+        return "{} - {}".format(self.schedule.date, self.schedule.recipe.name)
 
 class ExpenseUser(Model):
     expense = ForeignKey(Expense, on_delete=CASCADE)

@@ -1,9 +1,8 @@
-from django.shortcuts import render
 from recipe.models import *
 from user.models import *
 from expense.models import *
 from hashlib import sha256
-from django.http import JsonResponse, response
+from django.http import JsonResponse
 from eatup_api import views as main_view
 from datetime import date
 
@@ -271,7 +270,7 @@ def schedule_recipe(request):
         recipe_schedule = RecipeSchedule(home=home, recipe=recipe, meal=meal, date=date)
         recipe_schedule.save()
 
-        expense = Expense(schdule=recipe_schedule, user=home_user.user, amount=0)
+        expense = Expense(schedule=recipe_schedule, user=home_user.user, amount=0)
         expense.save()
 
         for user in user_list:
@@ -305,7 +304,7 @@ def get_recipe_schedule(request, user_id):
 
 def remove_recipe_schedule(request, schedule_id):
     if request.method == "GET":
-        expense = Expense.objects.get(schdule_id=schedule_id)
+        expense = Expense.objects.get(schedule_id=schedule_id)
         ExpenseUser.objects.filter(expense=expense).delete()
         Expense.objects.filter(pk=expense.id).delete()
         RecipeSchedule.objects.filter(pk=schedule_id).delete()
@@ -443,9 +442,14 @@ def exit_home(request, user_id):
 
 ''' expense splitter start '''
 
-def update_expense(requset, schedule_id):
-    if requset.method == "POST":
-        amount = requset.POST['amount']
+def get_expense(request, user_id):
+    if request.method == "GET":
+        pass
 
+def add_amount(request, schedule_id):
+    if request.method == "POST":
+        amount = request.POST['amount']
+        Expense.objects.filter(schedule_id=schedule_id).update(amount=amount)
+        return JsonResponse({'status':1}, safe=False)
 
 ''' expense splitter end '''
