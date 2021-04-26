@@ -19,6 +19,7 @@ urlpatterns = [
 
     path('expense/add/amount/<int:schedule_id>', add_amount_to_expense, name='add_amount_to_expense'),
     path('expense/get/<int:user_id>', get_expense, name='get_expense'),
+    path('expense/get/remaining/amount/<int:user_id>', load_remaining_amount, name='load_remaining_amount'),
 
     path('home/create', create_home, name='create_home'),
     path('home/get/<int:user_id>', get_user_home, name='get_user_home'),

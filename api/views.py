@@ -502,4 +502,12 @@ def add_amount_to_expense(request, schedule_id):
         Expense.objects.filter(schedule_id=schedule_id).update(amount=amount)
         return JsonResponse({'status':1}, safe=False)
 
+def load_remaining_amount(request, user_id):
+    if request.method == "GET":
+        home = HomeUser.objects.get(user_id=user_id).home
+        schedule = RecipeSchedule.objects.filter(home=home)
+        expense = Expense.objects.filter(schedule__in=schedule, amount=0).values()
+
+        return JsonResponse({'expense':list(expense)}, safe=False)
+
 ''' expense splitter end '''
