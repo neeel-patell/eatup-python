@@ -513,7 +513,7 @@ def load_remaining_amount(request, user_id):
             response.append({
                 'recipe':expense.schedule.recipe.name,
                 'date': "{}-{}-{}".format(expense.schedule.date.day,expense.schedule.date.month,expense.schedule.date.year),
-                'schedule_id':expense.id,
+                'schedule_id':expense.schedule.id,
             })
         return JsonResponse({'expense':response}, safe=False)
 
