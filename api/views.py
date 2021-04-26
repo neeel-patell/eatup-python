@@ -504,10 +504,17 @@ def add_amount_to_expense(request, schedule_id):
 
 def load_remaining_amount(request, user_id):
     if request.method == "GET":
+        response = []
         home = HomeUser.objects.get(user_id=user_id).home
         schedule = RecipeSchedule.objects.filter(home=home)
-        expense = Expense.objects.filter(schedule__in=schedule, amount=0).values()
+        expenses = Expense.objects.filter(schedule__in=schedule, amount=0)
 
-        return JsonResponse({'expense':list(expense)}, safe=False)
+        for expense in expenses:
+            response.append({
+                'recipe':expense.schedule.recipe.name,
+                'date': "{}-{}-{}".format(expense.schedule.date.day,expense.schedule.date.month,expense.schedule.date.year),
+                'schedule_id':expense.id,
+            })
+        return JsonResponse({'expense':response}, safe=False)
 
 ''' expense splitter end '''
