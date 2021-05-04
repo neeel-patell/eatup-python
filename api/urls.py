@@ -29,4 +29,6 @@ urlpatterns = [
     path('home/user/remove/<int:user_id>', remove_user_from_home, name='remove_user_from_home'),
     path('home/user/role/check/<int:user_id>', check_user_role, name='check_user_role'),
     path('home/exit/<int:user_id>', exit_home, name='exit_home'),
+
+    path('index/<int:user_id>', index, name='index'),
 ]

@@ -518,3 +518,14 @@ def load_remaining_amount(request, user_id):
         return JsonResponse({'expense':response}, safe=False)
 
 ''' expense splitter end '''
+
+''' home page starts '''
+def index(request, user_id):
+    if request.method == "GET":
+        # logistic regression should be implemented to find recipe visible to user
+        recipe = list(Recipe.objects.all().values('id', 'name'))
+        return JsonResponse({
+            'recipe':recipe
+            }, safe=False)
+
+''' home page ends '''
