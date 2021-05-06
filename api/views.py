@@ -525,7 +525,8 @@ def index(request, user_id):
         # logistic regression should be implemented to find recipe visible to user
         recipe = list(Recipe.objects.all().values('id', 'name'))
         return JsonResponse({
-            'recipe':recipe
+            'recipe':recipe,
+            'banner':"1.jpg", # banner path will be fetched from database and will sent to android
             }, safe=False)
 
 ''' home page ends '''
